@@ -1,0 +1,29 @@
+int[] nb_pizza = {13, 11, 8, 7, 5, 3, 0};
+int prix_pizza=10;
+int prix_livraison;
+
+
+void setup() {
+  println("Pizza début livraison: " + nb_pizza[0]);
+  for (int i = 0; i < nb_pizza.length-1; i++)
+  {
+    int  pizza_livree=nb_pizza[i]-nb_pizza[i+1];
+    int prix = total_livraison(nb_pizza[i]-nb_pizza[i+1]);
+    println("livraison " + (i+1) + ": pizza livrée " + pizza_livree + " > total à payer : " + prix + "€" + " pizza restante: " + nb_pizza[i+1]);
+  }
+}
+
+
+int total_livraison(int nb_pizzas) {
+
+  int prix_livraison;
+
+  if (nb_pizzas >= 3) {
+    prix_livraison = 0;
+  } else {
+    prix_livraison = 3;
+  }
+
+  int prix_service = nb_pizzas * prix_pizza + prix_livraison;
+  return prix_service;
+}
