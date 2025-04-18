@@ -1,0 +1,92 @@
+int age=45;
+float prix_billets = 100;
+String[] jours= {"Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"};
+String[] Cartes= {"ENFANT", "ILLICO 25", "ILLICO 26+", "ILLICO CARNET", "ILLICO AUTOCARS", "ILLICO SOLIDAIRE", "ILLICO MOBILITÉ", " ILLICO SÛRETÉ"};
+int prix_cartes=0;
+
+void setup() {
+
+  tarif();
+}
+
+void tarif() {
+
+  for (int j=0; j < jours.length; j++) {
+    for (int i=0; i < Cartes.length; i++) {
+      if (age <= 3) {
+
+        if (Cartes[i] == "ENFANT") {
+
+          prix_billets=0;
+          println("Le prix des billets pour les enfants de - de 3ans est de: ", prix_billets, "€");
+        }
+        if (age >= 4 && age <= 11) {
+          prix_billets = prix_billets*0.5;
+          println("Le prix des billets pour les enfants de 4 ans jusqu'a 11 ans est de: ", prix_billets, "€");
+        }
+      }
+
+
+
+      if (age >= 12 && age <= 25) {
+        if (Cartes[i] == "ILLICO 25") {
+
+          prix_cartes=15;
+          prix_billets = prix_billets*0.5;
+          println("Le prix des billets pour les personnes de - de 25ans est de: ", prix_billets, "€");
+        }
+
+        if (age >= 26) {
+          if (Cartes[i] == "ILLICO 26+") {
+            prix_cartes = 30;
+            if (jours[j] == "Samedi" || jours[j] == "Dimanche") {
+              prix_billets = prix_billets*0.50;
+            } else {
+
+              prix_billets = prix_billets*0.75;
+              println("Le prix des billets pour les personnes de + de 26ans est de: ", prix_billets, "€");
+            }
+          }
+
+          if (Cartes[i] == "ILLICO CARNET") {
+            int nb_billets=6;
+            if (nb_billets >= 0) {
+              prix_billets=prix_billets*0.80;
+
+              println("Le prix des billets pour les enfants de - de 3ans est de: ", prix_billets, "€");
+              nb_billets--;
+            } else {
+              prix_billets=100;
+            }
+          }
+        }
+
+        if (Cartes[i] == "ILLICO AUTOCARS") {
+
+          prix_billets=prix_billets * 0.70;
+
+          println("Le prix du billet pour un abonnement", Cartes[i], "est de: ", prix_billets, "€");
+        }
+      }
+
+      if (Cartes[i] == "ILLICO SOLIDAIRE") {
+
+        prix_billets=prix_billets*0.25;
+        println("Le prix du billet pour un abonnement", Cartes[i], "est de: ", prix_billets, "€");
+      }
+
+      if (Cartes[i] == "ILLICO MOBILITÉ") {
+
+        prix_billets=prix_billets*0.10;
+        println("Le prix du billet pour un abonnement", Cartes[i], "est de: ", prix_billets, "€");
+      }
+    }
+
+    if (Cartes[i] == "ILLICO SÛRETÉ") {
+
+      prix_billets=0;
+      println("Le prix du billet pour un abonnement", Cartes[i], "est de: ", prix_billets, "€");
+    }
+  }
+}
+}
