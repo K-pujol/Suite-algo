@@ -1,92 +1,113 @@
-int age=45;
+int nb_voyageurs = 1; // Un seul voyageur ici pour cet exemple
 float prix_billets = 100;
-String[] jours= {"Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"};
-String[] Cartes= {"ENFANT", "ILLICO 25", "ILLICO 26+", "ILLICO CARNET", "ILLICO AUTOCARS", "ILLICO SOLIDAIRE", "ILLICO MOBILITÉ", " ILLICO SÛRETÉ"};
-int prix_cartes=0;
+String[] jours = {"Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"};
+String[] Cartes = {"ENFANT", "ILLICO 25", "ILLICO 26+", "ILLICO CARNET", "ILLICO AUTOCARS", "ILLICO SOLIDAIRE", "ILLICO MOBILITÉ", "ILLICO SÛRETÉ"};
+int prix_cartes = 0;
+String input = "";
+int age_voyageurs = -1;
+boolean ageEntered = false;
 
 void setup() {
-
-  tarif();
+  size(400, 200);
+  println("Entrez votre âge et appuyez sur Entrée :");
 }
 
-void tarif() {
-
-  for (int j=0; j < jours.length; j++) {
-    for (int i=0; i < Cartes.length; i++) {
-      if (age <= 3) {
-
-        if (Cartes[i] == "ENFANT") {
-
-          prix_billets=0;
-          println("Le prix des billets pour les enfants de - de 3ans est de: ", prix_billets, "€");
-        }
-        if (age >= 4 && age <= 11) {
-          prix_billets = prix_billets*0.5;
-          println("Le prix des billets pour les enfants de 4 ans jusqu'a 11 ans est de: ", prix_billets, "€");
-        }
-      }
+void draw() {
+  background(255);
+  fill(0);
+  textSize(16);
+  if (!ageEntered) {
+    text("Entrez votre âge : " + input, 20, 100);
+  } else {
+    text("Âge enregistré : " + age_voyageurs, 20, 100);
+  }
+}
 
 
-
-      if (age >= 12 && age <= 25) {
-        if (Cartes[i] == "ILLICO 25") {
-
-          prix_cartes=15;
-          prix_billets = prix_billets*0.5;
-          println("Le prix des billets pour les personnes de - de 25ans est de: ", prix_billets, "€");
-        }
-
-        if (age >= 26) {
-          if (Cartes[i] == "ILLICO 26+") {
-            prix_cartes = 30;
-            if (jours[j] == "Samedi" || jours[j] == "Dimanche") {
-              prix_billets = prix_billets*0.50;
-            } else {
-
-              prix_billets = prix_billets*0.75;
-              println("Le prix des billets pour les personnes de + de 26ans est de: ", prix_billets, "€");
-            }
-          }
-
-          if (Cartes[i] == "ILLICO CARNET") {
-            int nb_billets=6;
-            if (nb_billets >= 0) {
-              prix_billets=prix_billets*0.80;
-
-              println("Le prix des billets pour les enfants de - de 3ans est de: ", prix_billets, "€");
-              nb_billets--;
-            } else {
-              prix_billets=100;
-            }
-          }
-        }
-
-        if (Cartes[i] == "ILLICO AUTOCARS") {
-
-          prix_billets=prix_billets * 0.70;
-
-          println("Le prix du billet pour un abonnement", Cartes[i], "est de: ", prix_billets, "€");
-        }
-      }
-
-      if (Cartes[i] == "ILLICO SOLIDAIRE") {
-
-        prix_billets=prix_billets*0.25;
-        println("Le prix du billet pour un abonnement", Cartes[i], "est de: ", prix_billets, "€");
-      }
-
-      if (Cartes[i] == "ILLICO MOBILITÉ") {
-
-        prix_billets=prix_billets*0.10;
-        println("Le prix du billet pour un abonnement", Cartes[i], "est de: ", prix_billets, "€");
-      }
-    }
-
-    if (Cartes[i] == "ILLICO SÛRETÉ") {
-
-      prix_billets=0;
-      println("Le prix du billet pour un abonnement", Cartes[i], "est de: ", prix_billets, "€");
+void keyPressed() {
+  if (!ageEntered) {
+    if (key == ENTER || key == RETURN) {
+      age_voyageurs = int(input);
+      ageEntered = true;
+      
+      
+      String type_cartes = "ILLICO 26+"; 
+      String jour = "Samedi"; 
+      int nb_billets = 6; 
+      float prix_total = tarif(age_voyageurs, jour, type_cartes, nb_billets, nb_voyageurs);
+      
+      println("Le prix pour un voyageur de " + age_voyageurs + " ans est de : " + prix_total + "€");
+    } else if (key == BACKSPACE && input.length() > 0) {
+      input = input.substring(0, input.length() - 1);
+    } else if (key >= '0' && key <= '9') {
+      input += key;
     }
   }
 }
+
+float tarif(int age, String j_semaines, String type_cartes, int nb_billets, int nb_voyageurs) {
+  float prix_billets = 100;
+  int ticket_restant = 6;
+  float PrixTotal = 0;
+
+  // Calcul du prix pour chaque voyageur
+  for (int v = 0; v < nb_voyageurs; v++) {
+    float prix_voyageur = 100; 
+
+    // Calcul du prix basé sur l'âge
+    if (age <= 3) {
+      if (type_cartes == "ENFANT") {
+        prix_voyageur = 0;
+      }
+    }
+
+    if (age >= 4 && age <= 11) {
+      prix_voyageur = prix_voyageur * 0.5;
+    }
+
+    if (age >= 12 && age <= 25) {
+      if (type_cartes == "ILLICO 25") {
+        prix_voyageur = prix_voyageur * 0.5;
+      }
+    }
+
+    if (age >= 26) {
+      if (type_cartes == "ILLICO 26+") {
+        if (j_semaines == "Samedi" || j_semaines == "Dimanche") {
+          prix_voyageur = prix_voyageur * 0.50;
+        } else {
+          prix_voyageur = prix_voyageur * 0.75;
+        }
+      }
+
+      if (type_cartes == "ILLICO CARNET") {
+        if (ticket_restant > 0) {
+          prix_voyageur = prix_voyageur * 0.80;
+          ticket_restant--;
+        } else {
+          prix_voyageur = 100; 
+        }
+      }
+    }
+
+    if (type_cartes == "ILLICO AUTOCARS") {
+      prix_voyageur = prix_voyageur * 0.70;
+    }
+
+    if (type_cartes == "ILLICO SOLIDAIRE") {
+      prix_voyageur = prix_voyageur * 0.25;
+    }
+
+    if (type_cartes == "ILLICO MOBILITÉ") {
+      prix_voyageur = prix_voyageur * 0.10;
+    }
+
+    if (type_cartes == "ILLICO SÛRETÉ") {
+      prix_voyageur = 0;
+    }
+
+    PrixTotal += prix_voyageur; 
+  }
+
+  return PrixTotal; 
 }
