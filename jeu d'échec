@@ -77,6 +77,8 @@ void setup() {
 void draw() {
 
 
+
+
   for (int y = 0; y < plateau.length; y++) {
     for (int x = 0; x < plateau[y].length; x++) {
       if ((x + y) % 2 == 0) {
@@ -87,7 +89,6 @@ void draw() {
       rect(x * taille_case, y * taille_case, taille_case, taille_case);
     }
   }
-
   affichage_piece();
 
 
@@ -185,9 +186,6 @@ void maj_cases() {
 }
 
 
-boolean estCaseOccupee(int x, int y) {
-  return cases_occupees[x][y];
-}
 
 
 void affichage_piece() {
@@ -252,14 +250,51 @@ void affichage_piece() {
 }
 
 
-void MangerPiece() {
+void MangerPiece(int x, int y) {
 
-  boolean manger=false;
+  for (int i = 0; i < pieces.size(); i++) {
+    Piece p = pieces.get(i);
+    if (p.x == x && p.y == y) {
+      //if (p.Couleur==false) {
+      pieces.remove(i);
+      cases_occupees[x][y] = false;
+      break;
+    }
+    //}
+  }
 }
 
 
+int deplacement(int x, int y) {
+  int direction_p = 0;
 
 
+  if (selectedPiece != null) {
+
+    if (selectedPiece.Type.equals("Pion")) {
+
+      if ((selectedPiece.Couleur && selectedPiece.x == 6) || (!selectedPiece.Couleur && selectedPiece.x == 1)) {
+        // Pion blanc (6) ou noir (1), peut avancer de 2 cases
+        if (selectedPiece.Couleur == true) {
+          direction_p = -2;  // Pion blanc va vers le haut
+        } else {
+          direction_p = 2;   // Pion noir va vers le bas
+        }
+      } else {
+        // Pion peut avancer de 1 case après
+        if (selectedPiece.Couleur == true) {
+          direction_p = -1;  // Pion blanc avance d'une case vers le haut
+        } else {
+          direction_p = 1;   // Pion noir avance d'une case vers le bas
+        }
+      }
+
+      return direction_p;
+    }
+  }
+
+  return 0;  // Retourner 0 si le mouvement n'est pas valide
+}
 
 
 
@@ -281,28 +316,37 @@ class Piece {
 void mouseClicked() {
   int x = mouseX / taille_case;
   int y = mouseY / taille_case;
+
   piece_presente();
+  deplacement (x,y);
 
-  if (selectedPiece == null)
-  {
+  if (selectedPiece == null) {
     for (int i = 0; i < pieces.size(); i++) {
-
       Piece p = pieces.get(i);
-      if (p.x == x && p.y == y)
-
-      {
-        selectedPiece = p; // Sélectionne la pièce
+      if (p.x == x && p.y == y) {
+        selectedPiece = p;
         break;
       }
     }
   } else {
-
     if (x != selectedPiece.x || y != selectedPiece.y) {
 
+      for (Piece p : pieces) {
+        if (p.x == x && p.y == y) {
+          if (p.Couleur == selectedPiece.Couleur) {
+            selectedPiece = null;
+            return;
+          }
+        }
+      }
+
+      MangerPiece(x, y);
       selectedPiece.x = x;
       selectedPiece.y = y;
     }
-    selectedPiece = null; // Désélectionne la pièce après le mouvement
+
+    selectedPiece = null;
   }
+
   println("case cliquée", x + 1, y + 1);
 }
