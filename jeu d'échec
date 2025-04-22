@@ -4,6 +4,9 @@ int plateau_y= taille_case/2;
 int nbLignes = plateau.length;
 int nbColonnes = plateau[0].length;
 ArrayList<Piece> pieces = new ArrayList<Piece>();
+
+
+
 PImage roi_b_Image;
 PImage roi_n_Image;
 PImage reine_b_Image;
@@ -17,6 +20,10 @@ PImage tour_n_Image;
 PImage Pion_b_Image;
 PImage Pion_n_Image;
 
+Piece selectedPiece=null;
+
+// ------------------------------------------------------------------//
+
 void settings() {
   int largeur = taille_case * nbColonnes;
   int hauteur = taille_case * nbLignes;
@@ -24,76 +31,49 @@ void settings() {
 }
 
 void setup() {
- 
+
+  Pion_n_Image = loadImage("pion_n.png");
+  roi_n_Image = loadImage("roi_n.png");
+  reine_n_Image = loadImage("reine_n.png");
+  fou_n_Image = loadImage("fou_n.png");
+  cavalier_n_Image = loadImage("cavalier_n.png");
+  tour_n_Image = loadImage("tour_n.png");
+
+  Pion_b_Image = loadImage("pion_b.png");
+  roi_b_Image = loadImage("roi_b.png");
+  reine_b_Image = loadImage("reine_b.png");
+  fou_b_Image = loadImage("fou_b.png");
+  cavalier_b_Image = loadImage("cavalier_b.png");
+  tour_b_Image = loadImage("tour_b.png");
+
+
   // Noirs
   for (int x = 0; x < 8; x++) {
-    Pion_n_Image = loadImage("pion_n.png");
     pieces.add(new Piece("Pion", false, 1, x));
   }
-  
-  roi_n_Image = loadImage("roi_n.png");
   pieces.add(new Piece("Roi", false, 0, 4));
-
-  reine_n_Image = loadImage("reine_n.png");
   pieces.add(new Piece("Reine", false, 0, 3));
-
-  fou_n_Image = loadImage("reine_n.png");
-  pieces.add(new Piece("Reine", false, 0, 3));
-
-  cavalier_n_Image = loadImage("reine_n.png");
-  pieces.add(new Piece("Reine", false, 0, 3));
-
-  tour_n_Image = loadImage("tour_n.png");
+  pieces.add(new Piece("Fou", false, 0, 2));
+  pieces.add(new Piece("Fou", false, 0, 5));
+  pieces.add(new Piece("Cavalier", false, 0, 1));
+  pieces.add(new Piece("Cavalier", false, 0, 6));
   pieces.add(new Piece("Tour", false, 0, 0));
-  tour_n_Image = loadImage("tour_n.png");
   pieces.add(new Piece("Tour", false, 0, 7));
 
-  cavalier_n_Image = loadImage("cavalier_n.png");
-  pieces.add(new Piece("Cavalier", false, 0, 1));
-  cavalier_n_Image = loadImage("cavalier_n.png");
-  pieces.add(new Piece("Cavalier", false, 0, 6));
-  
-  fou_n_Image = loadImage("fou_n.png");
-  pieces.add(new Piece("Fou", false, 0, 2));
-  fou_n_Image = loadImage("fou_n.png");
-  pieces.add(new Piece("Fou", false, 0, 5));
-  
-  
-  
-  // Blanc
+  // Blancs
   for (int x = 0; x < 8; x++) {
-    Pion_b_Image = loadImage("pion_b.png");
     pieces.add(new Piece("Pion", true, 6, x));
   }
-  
-  roi_b_Image = loadImage("roi_b.png");
   pieces.add(new Piece("Roi", true, 7, 4));
-
-  reine_b_Image = loadImage("reine_b.png");
   pieces.add(new Piece("Reine", true, 7, 3));
-
-  fou_b_Image = loadImage("reine_b.png");
-  pieces.add(new Piece("Reine", true, 7, 3));
-
-  cavalier_b_Image = loadImage("reine_b.png");
-  pieces.add(new Piece("Reine", true, 7, 3));
-
-  tour_b_Image = loadImage("tour_b.png");
-  pieces.add(new Piece("Tour", true, 7, 0));
-  tour_b_Image = loadImage("tour_b.png");
-  pieces.add(new Piece("Tour", true, 7, 7));
-
-  cavalier_b_Image = loadImage("cavalier_b.png");
-  pieces.add(new Piece("Cavalier", true, 7, 1));
-  cavalier_b_Image = loadImage("cavalier_b.png");
-  pieces.add(new Piece("Cavalier", true, 7, 6));
-  
-  fou_b_Image = loadImage("fou_b.png");
   pieces.add(new Piece("Fou", true, 7, 2));
-  fou_b_Image = loadImage("fou_b.png");
   pieces.add(new Piece("Fou", true, 7, 5));
-  
+  pieces.add(new Piece("Cavalier", true, 7, 1));
+  pieces.add(new Piece("Cavalier", true, 7, 6));
+  pieces.add(new Piece("Tour", true, 7, 0));
+  pieces.add(new Piece("Tour", true, 7, 7));
 }
+
 
 void draw() {
   background(255);
@@ -103,7 +83,7 @@ void draw() {
       if ((x + y) % 2 == 0) {
         fill(255, 238, 210);
       } else {
-        fill(73, 49, 14);
+        fill(100, 20, 20);
       }
       rect(x * taille_case, y * taille_case, taille_case, taille_case);
     }
@@ -112,11 +92,13 @@ void draw() {
   for (Piece p : pieces) {
     float pieceX = p.x * taille_case + taille_case / 2; // Position X centrée
     float pieceY = p.y * taille_case + taille_case / 2; // Position Y centrée
+    float zoom = 1.5;
 
-    if (p.Type.equals("Roi") && p.Couleur == false) {
+    if (selectedPiece != null && selectedPiece.Type.equals("Roi") && selectedPiece.Couleur == false) {
       imageMode(CENTER);
-      image(roi_n_Image, pieceX, pieceY, taille_case/1.5, taille_case/1.5);
+      image(roi_n_Image, mouseX - taille_case * zoom / 2, mouseY - taille_case * zoom / 2, taille_case * zoom, taille_case * zoom);
     }
+
 
     if (p.Type.equals("Reine") && p.Couleur == false) {
       imageMode(CENTER);
@@ -141,11 +123,11 @@ void draw() {
       imageMode(CENTER);
       image(tour_n_Image, pieceX, pieceY, taille_case, taille_case);
     }
-    
-    
-    
-    
-    
+
+
+
+    // blanc
+
     if (p.Type.equals("Roi") && p.Couleur == true) {
       imageMode(CENTER);
       image(roi_b_Image, pieceX, pieceY, taille_case/1.5, taille_case/1.5);
@@ -172,9 +154,8 @@ void draw() {
     }
     if (p.Type.equals("Tour") && p.Couleur == true) {
       imageMode(CENTER);
-      image(tour_b_Image, pieceX, pieceY, taille_case, taille_case);
+      image(tour_b_Image, pieceX, pieceY, taille_case/1.5, taille_case/1.5);
     }
-    
   }
 }
 
@@ -190,4 +171,22 @@ class Piece {
     x = colonnes;
     y = lignes;
   }
+}
+
+
+
+void mouseClicked() {
+  int x = mouseX / taille_case;
+  int y = mouseY / taille_case;
+
+  for (int i = 0; i < pieces.size(); i++) {
+    Piece p = pieces.get(i);
+    if (p.x == x && p.y == y) {
+      selectedPiece = p;
+    }
+  }
+
+
+
+  println("case cliquée", x + 1, y + 1);
 }
