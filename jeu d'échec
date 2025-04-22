@@ -4,8 +4,7 @@ int plateau_y= taille_case/2;
 int nbLignes = plateau.length;
 int nbColonnes = plateau[0].length;
 ArrayList<Piece> pieces = new ArrayList<Piece>();
-
-
+boolean cases_occupees [][] = new boolean [plateau.length][plateau[0].length];
 
 PImage roi_b_Image;
 PImage roi_n_Image;
@@ -76,88 +75,193 @@ void setup() {
 
 
 void draw() {
-  background(255);
+
 
   for (int y = 0; y < plateau.length; y++) {
     for (int x = 0; x < plateau[y].length; x++) {
       if ((x + y) % 2 == 0) {
-        fill(255, 238, 210);
+        fill(234, 218, 248);
       } else {
-        fill(100, 20, 20);
+        fill(151, 118, 179);
       }
       rect(x * taille_case, y * taille_case, taille_case, taille_case);
     }
   }
 
-  for (Piece p : pieces) {
-    float pieceX = p.x * taille_case + taille_case / 2; // Position X centrée
-    float pieceY = p.y * taille_case + taille_case / 2; // Position Y centrée
-    float zoom = 1.5;
+  affichage_piece();
 
-    if (selectedPiece != null && selectedPiece.Type.equals("Roi") && selectedPiece.Couleur == false) {
-      imageMode(CENTER);
-      image(roi_n_Image, mouseX - taille_case * zoom / 2, mouseY - taille_case * zoom / 2, taille_case * zoom, taille_case * zoom);
+
+  if (selectedPiece != null) {
+    float zoom = 1.3;
+    imageMode(CENTER);
+
+    //noir
+
+    if (selectedPiece.Type.equals("Roi") && selectedPiece.Couleur == false) {
+      image(roi_n_Image, mouseX, mouseY, taille_case * zoom, taille_case * zoom);
+    }
+
+    if (selectedPiece.Type.equals("Reine") && selectedPiece.Couleur == false) {
+      image(reine_n_Image, mouseX, mouseY, taille_case * zoom, taille_case * zoom);
+    }
+
+    if (selectedPiece.Type.equals("Pion") && selectedPiece.Couleur == false) {
+      image(Pion_n_Image, mouseX, mouseY, taille_case * zoom, taille_case * zoom);
+    }
+
+    if (selectedPiece.Type.equals("Fou") && selectedPiece.Couleur == false) {
+      image(fou_n_Image, mouseX, mouseY, taille_case * zoom, taille_case * zoom);
+    }
+
+    if (selectedPiece.Type.equals("Cavalier") && selectedPiece.Couleur == false) {
+      image(cavalier_n_Image, mouseX, mouseY, taille_case * zoom, taille_case * zoom);
+    }
+
+    if (selectedPiece.Type.equals("Tour") && selectedPiece.Couleur == false) {
+      image(tour_n_Image, mouseX, mouseY, taille_case * zoom, taille_case * zoom);
     }
 
 
+    //blanc
+
+    if (selectedPiece.Type.equals("Roi") && selectedPiece.Couleur == true) {
+      image(roi_b_Image, mouseX, mouseY, taille_case * zoom, taille_case * zoom);
+    }
+
+    if (selectedPiece.Type.equals("Reine") && selectedPiece.Couleur == true) {
+      image(reine_b_Image, mouseX, mouseY, taille_case * zoom, taille_case * zoom);
+    }
+
+    if (selectedPiece.Type.equals("Pion") && selectedPiece.Couleur == true) {
+      image(Pion_b_Image, mouseX, mouseY, taille_case * zoom, taille_case * zoom);
+    }
+
+    if (selectedPiece.Type.equals("Fou") && selectedPiece.Couleur == true) {
+      image(fou_b_Image, mouseX, mouseY, taille_case * zoom, taille_case * zoom);
+    }
+
+    if (selectedPiece.Type.equals("Cavalier") && selectedPiece.Couleur == true) {
+      image(cavalier_b_Image, mouseX, mouseY, taille_case * zoom, taille_case * zoom);
+    }
+
+    if (selectedPiece.Type.equals("Tour") && selectedPiece.Couleur == true) {
+      image(tour_b_Image, mouseX, mouseY, taille_case * zoom, taille_case * zoom);
+    }
+  }
+}
+
+
+// check si il ya une piece ou pas
+void piece_presente() {
+  boolean piece_presente = false;
+  for (int x = 0; x < plateau.length; x++) {
+    for (int y = 0; y < plateau[x].length; y++) {
+      if (cases_occupees[x][y]) {
+        piece_presente = true;
+        break;
+      }
+    }
+    if (piece_presente) {
+      break;
+    }
+  }
+  println(piece_presente);
+}
+
+
+// définir si cases occupés ou non
+void maj_cases() {
+
+
+  for (int x = 0; x < plateau.length; x++) {
+    for (int y = 0; y < plateau[x].length; y++) {
+
+      cases_occupees[x][y] = false;
+    }
+  }
+  for (Piece p : pieces) {
+    cases_occupees[p.x][p.y] = true;
+  }
+}
+
+
+boolean estCaseOccupee(int x, int y) {
+  return cases_occupees[x][y];
+}
+
+
+void affichage_piece() {
+  for (Piece p : pieces) {
+
+    float pieceX = p.x * taille_case + taille_case / 2; // Position X centrée
+    float pieceY = p.y * taille_case + taille_case / 2; // Position Y centrée
+    imageMode(CENTER);
+    if (p == selectedPiece) {
+      continue;
+    }
+    // noir
+
+    if (p.Type.equals("Roi") && p.Couleur == false) {
+      image(roi_n_Image, pieceX, pieceY, taille_case/1.5, taille_case/1.5);
+    }
     if (p.Type.equals("Reine") && p.Couleur == false) {
-      imageMode(CENTER);
       image(reine_n_Image, pieceX, pieceY, taille_case, taille_case);
     }
 
     if (p.Type.equals("Pion") && p.Couleur == false) {
-      imageMode(CENTER);
       image(Pion_n_Image, pieceX, pieceY, taille_case/1.5, taille_case/1.5);
     }
 
     if (p.Type.equals("Fou") && p.Couleur == false) {
-      imageMode(CENTER);
       image(fou_n_Image, pieceX, pieceY, taille_case/1.5, taille_case/1.5);
     }
 
     if (p.Type.equals("Cavalier") && p.Couleur == false) {
-      imageMode(CENTER);
       image(cavalier_n_Image, pieceX, pieceY, taille_case, taille_case);
     }
     if (p.Type.equals("Tour") && p.Couleur == false) {
-      imageMode(CENTER);
       image(tour_n_Image, pieceX, pieceY, taille_case, taille_case);
     }
-
 
 
     // blanc
 
     if (p.Type.equals("Roi") && p.Couleur == true) {
-      imageMode(CENTER);
       image(roi_b_Image, pieceX, pieceY, taille_case/1.5, taille_case/1.5);
     }
 
     if (p.Type.equals("Reine") && p.Couleur == true) {
-      imageMode(CENTER);
       image(reine_b_Image, pieceX, pieceY, taille_case/1.5, taille_case/1.5);
     }
 
     if (p.Type.equals("Pion") && p.Couleur == true) {
-      imageMode(CENTER);
       image(Pion_b_Image, pieceX, pieceY, taille_case/1.5, taille_case/1.5);
     }
 
     if (p.Type.equals("Fou") && p.Couleur == true) {
-      imageMode(CENTER);
       image(fou_b_Image, pieceX, pieceY, taille_case/1.5, taille_case/1.5);
     }
 
     if (p.Type.equals("Cavalier") && p.Couleur == true) {
-      imageMode(CENTER);
       image(cavalier_b_Image, pieceX, pieceY, taille_case/1.5, taille_case/1.5);
     }
     if (p.Type.equals("Tour") && p.Couleur == true) {
-      imageMode(CENTER);
       image(tour_b_Image, pieceX, pieceY, taille_case/1.5, taille_case/1.5);
     }
   }
 }
+
+
+void MangerPiece() {
+
+  boolean manger=false;
+}
+
+
+
+
+
+
 
 class Piece {
   String Type;
@@ -174,19 +278,31 @@ class Piece {
 }
 
 
-
 void mouseClicked() {
   int x = mouseX / taille_case;
   int y = mouseY / taille_case;
+  piece_presente();
 
-  for (int i = 0; i < pieces.size(); i++) {
-    Piece p = pieces.get(i);
-    if (p.x == x && p.y == y) {
-      selectedPiece = p;
+  if (selectedPiece == null)
+  {
+    for (int i = 0; i < pieces.size(); i++) {
+
+      Piece p = pieces.get(i);
+      if (p.x == x && p.y == y)
+
+      {
+        selectedPiece = p; // Sélectionne la pièce
+        break;
+      }
     }
+  } else {
+
+    if (x != selectedPiece.x || y != selectedPiece.y) {
+
+      selectedPiece.x = x;
+      selectedPiece.y = y;
+    }
+    selectedPiece = null; // Désélectionne la pièce après le mouvement
   }
-
-
-
   println("case cliquée", x + 1, y + 1);
 }
